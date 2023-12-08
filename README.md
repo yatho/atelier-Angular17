@@ -11,3 +11,7 @@ Toute contribution est la bienvenue. Toutefois attention, le fichier dans le dos
 ## Compiler l'atelier pour générer le html
 
 Utiliser la commande *claat* comme suit : ```claat export atelier.md```.
+
+## Atelier
+
+L'atelier est disponible en suivant ce [lien](https://yatho.github.io/atelier-Angular17/atelier-angular-17/).
