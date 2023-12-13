@@ -8,20 +8,27 @@ feedback link: https://github.com/yatho/atelier-Angular17.git
 
 # Atelier angular 17
 
-## Partie 1 : Configuration projet
+## Partie 1 : Configuration projet (dans ppt)
 
-1. ESBuild - Explication diff avec Webpack (Expliquer ppt)
-2. Jest (Explication ppt)
+1. Présentation de nous
+2. Présentation de l'atelier
+3. Changement url docs, logo pour marquer le changement
+4. ESBuild - Explication diff avec Webpack (Expliquer ppt)
+5. Jest (Explication ppt)
+6. ng new -> ssr devient une norme -> on en parlera
+7. Une migration "ng update".
+
+-- Début du code labs
 
 ## Partie 2 : Control flow
 
-1. Explication (PowerPoint)
+1. Explication
 2. Réaliser le TP
 3. Migrer avec schematics
 
 ## Partie 3 : Standalone
 
-1. Explication (PPT)
+1. Explication
 2. Réaliser le TP
 3. Migrer avecschematics
 
