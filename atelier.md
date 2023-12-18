@@ -20,13 +20,7 @@ feedback link: https://github.com/yatho/atelier-Angular17.git
 
 -- Début du code labs
 
-## Partie 2 : Control flow
-
-1. Explication
-2. Réaliser le TP
-3. Migrer avec schematics
-
-## Partie 3 : Standalone
+## Partie 2 : Standalone
 
 1. Explication
 2. Réaliser le TP
@@ -34,11 +28,17 @@ feedback link: https://github.com/yatho/atelier-Angular17.git
 
 // TODO : Aller plus loins moduleProviders
 
-## Partie 4 : Formulaire typé
+## Partie 3 : Control flow
 
-## Partie 5 : Signals
+1. Explication
+2. Réaliser le TP
+3. Migrer avec schematics
 
-## Partie 6 : SSR
+## Partie 4 : SSR
+
+## Partie 5 : Formulaire typé
+
+## Partie 6 : Signals
 
 ## Partie 7 : Performance
 
