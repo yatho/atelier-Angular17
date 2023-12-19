@@ -4,6 +4,8 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { RecipeFormComponent } from './recipe-form/recipe-form.component';
 import { RecipeRoutingModule } from './recipe-routing.module';
+import { VeganComponent } from './recipe/vegan/vegan.component';
+import { OtherComponent } from './recipe/other/other.component';
 
 
 
@@ -11,7 +13,9 @@ import { RecipeRoutingModule } from './recipe-routing.module';
   declarations: [
     RecipeListComponent,
     RecipeComponent,
-    RecipeFormComponent
+    RecipeFormComponent,
+    VeganComponent,
+    OtherComponent
   ],
   imports: [
     CommonModule,

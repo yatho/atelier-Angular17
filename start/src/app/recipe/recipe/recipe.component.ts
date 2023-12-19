@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ResponseType } from '../models/recipe';
 
 @Component({
   selector: 'app-recipe',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './recipe.component.css'
 })
 export class RecipeComponent {
-
+  recipe?: ResponseType;
 }

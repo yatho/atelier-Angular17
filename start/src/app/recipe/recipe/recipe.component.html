@@ -1,1 +1,29 @@
 <p>recipe works!</p>
+
+@if(recipe) {
+    @switch (recipe.type) {
+        @case ('vegan') {
+            <app-vegan [recipe]="recipe.recipe"></app-vegan>
+        }
+        <!-- ICI autocomplétion qui n'existait pas avant -->
+        @case ('nonVegan') {
+            <!-- Bug affiché car type définit -->
+            <!-- <app-vegan [recipe]="recipe.recipe"></app-vegan> -->
+            <app-other [recipe]="recipe.recipe"></app-other>
+        }
+        @default {
+
+        }
+    }
+}
+
+<ng-container *ngIf="recipe">
+    <ng-container [ngSwitch]="recipe.type">
+        <!-- Ici erreur alors que ça devrait être bon, obligé de switcher sur du @any -->
+        <app-vegan *ngSwitchCase="'vegan'" [recipe]="recipe.recipe"></app-vegan>
+        <!-- <app-vegan *ngSwitchCase="'vegan'" [recipe]="$any(recipe.recipe)"></app-vegan> -->
+        <!-- Ici pas d'erreur sur le switchCase alors que cas impossible noVegan !== nonVegan -->
+        <app-other *ngSwitchCase="'noVegan'" [recipe]="recipe.recipe"></app-other>
+        <app-other *ngSwitchDefault [recipe]="recipe.recipe"></app-other>
+    </ng-container>
+</ng-container>
