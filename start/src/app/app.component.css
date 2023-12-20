@@ -5,6 +5,10 @@
     background-repeat: no-repeat;
     animation: progress 3s infinite;
  }
+
+ .loading {
+    opacity: 0.3;
+ }
  
  @keyframes progress {
     0% {

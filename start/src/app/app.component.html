@@ -1,4 +1,6 @@
-<span>{{title}} is working</span>
-<router-outlet></router-outlet>
+<!-- TODO : Mettre un header -->
 
 <div *ngIf="loader" class="loader"></div>
+<section [ngClass]="{ 'loading': loader }">
+    <router-outlet></router-outlet>
+</section>
