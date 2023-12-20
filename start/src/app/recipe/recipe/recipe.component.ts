@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { ResponseType } from '../models/recipe';
+import { Component, Input } from '@angular/core';
+import { Recipe } from '../models/recipe';
 
 @Component({
   selector: 'app-recipe',
@@ -7,5 +7,5 @@ import { ResponseType } from '../models/recipe';
   styleUrl: './recipe.component.css'
 })
 export class RecipeComponent {
-  recipe?: ResponseType;
+  @Input({required: true}) recipe?: Recipe;
 }

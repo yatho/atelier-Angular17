@@ -1,1 +1,7 @@
 <p>recipe-list works!</p>
+
+<table>
+    <tr *ngFor="let recipe of recipes">
+        <td [routerLink]="[recipe.id]">{{recipe.name}}</td>
+    </tr>
+</table>

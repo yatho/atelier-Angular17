@@ -1,20 +1,19 @@
-export type ResponseType = VeganResponseType | OtherResponseType;
+export type Recipe = RecipeV1 | RecipeV2;
 
-export type VeganResponseType = {
-    type: 'vegan';
-    recipe: VeganRecipe;
+export type CommonRecipe = {
+    id: number;
+    name: string;
 }
 
-export type OtherResponseType = {
-    type: 'nonVegan';
-    recipe: Recipe;
+export type RecipeV1 = CommonRecipe & {
+    version: 'v1';
+    instructions: string[];
+    ingredients: string[];
+    type: RecipeType;
 }
 
-export type VeganRecipe = Recipe & {
-    theme: string; // Salé / Sucré / Sans gluten / express
-}
-
-export type Recipe = {
+export type RecipeV2 = CommonRecipe & {
+    version: 'v2';
     id: number;
     name: string;
     ingredients: Ingredient[];

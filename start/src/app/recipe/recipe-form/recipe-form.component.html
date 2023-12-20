@@ -1,1 +1,6 @@
 <p>recipe-form works!</p>
+
+<h1 *ngIf="!!recipe else createTpl">Editer</h1>
+<ng-template #createTpl>
+    <h1>Créer</h1>
+</ng-template>

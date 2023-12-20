@@ -1,0 +1,8 @@
+{
+    "/api": {
+        "target": "https://my-json-server.typicode.com/yatho/atelier-db",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {"^/api" : ""}
+    }
+}

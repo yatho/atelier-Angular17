@@ -3,19 +3,28 @@ import { Routes, RouterModule } from '@angular/router';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { RecipeFormComponent } from './recipe-form/recipe-form.component';
+import { recipesResolver } from './resolvers/recipes.resolver';
+import { recipeResolver } from './resolvers/recipe.resolver';
 
 const routes: Routes = [
   {
-    path: '', component: RecipeListComponent
+    path: '', component: RecipeListComponent,
+    resolve: {
+      recipes: recipesResolver
+    }
   },
   {
-    path: ':id/edit', component: RecipeFormComponent
+    path: ':id/edit', component: RecipeFormComponent, resolve: {
+      recipe: recipeResolver
+    }
   },
   {
     path: 'create', component: RecipeFormComponent
   },
   {
-    path: ':id', component: RecipeComponent
+    path: ':id', component: RecipeComponent, resolve: {
+      recipe: recipeResolver
+    }
   },
   {
     path: '**', redirectTo: ''
