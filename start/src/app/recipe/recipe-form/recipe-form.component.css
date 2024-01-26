@@ -1,0 +1,14 @@
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.stepContent {
+    display: flex;
+    flex-direction: column;
+
+    > section.actions {
+        align-self: flex-end;
+    }
+}

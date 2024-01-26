@@ -1,0 +1,711 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Atelier angular 17</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="atelier-angular-17"
+                  title="Atelier angular 17"
+                  environment="web"
+                  feedback-link="https://github.com/yatho/atelier-Angular17.git">
+    
+      <google-codelab-step label="Introduction" duration="5">
+        <p>Cet atelier permet de monter en compétence sur les dernières versions d&#39;Angular en migrant une petite application.</p>
+<ol type="1">
+<li>Fork du <a href="https://github.com/yatho/atelier-Angular17" target="_blank">repo</a>.</li>
+<li>Clonez sur votre poste.</li>
+<li>Lancer : <code>npm install</code></li>
+<li>Lancer : <code>npm start</code></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 1 : Input binding (Théorie)" duration="0">
+        <h2 is-upgraded>Required</h2>
+<p>Depuis <strong>Angular 16</strong>, il est possible de dire au compilateur que l&#39;input est obligatoire.</p>
+<pre><code language="language-typescript" class="language-typescript">@Input({required: true}) name: string;
+</code></pre>
+<h2 is-upgraded>bindToComponentInputs / withComponentInputBinding</h2>
+<p>Il n&#39;est plus nécessaire d&#39;importer le service <strong>Route</strong> pour lire au sein de l&#39;url. En configurant l&#39;option suivante :</p>
+<p>Pour des modules :</p>
+<pre><code language="language-typescript" class="language-typescript">@NgModule({
+  imports: [RouterModule.forRoot(routes, {
+    bindToComponentInputs: true
+  })],
+  exports: [RouterModule]
+})
+</code></pre>
+<p>Pour du standalone :</p>
+<pre><code language="language-typescript" class="language-typescript">bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes, 
+        ...
+        withComponentInputBinding()
+    )
+  ],
+});
+</code></pre>
+<p>Depuis une url tel que celle-ci :</p>
+<pre><code>http://localhost:4200/your-path/42?query=Angular
+</code></pre>
+<p>On peut récupérer directement les informations sous formes d&#39;input au sein des composants:</p>
+<pre><code language="language-typescript" class="language-typescript">import { ActivatedRoute } from &#39;@angular/router&#39;;
+
+@Component({ ... })
+class YourComponent {
+  @Input() id?: number;
+  @Input() crisis?: Crisis;
+  @Input() otherSample?: string;
+  @Input() query?: string;
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 1 : Input binding (TP)" duration="15">
+        <ol type="1">
+<li>Supprimer le fichier <code>utility.ts</code> et utiliser des @Input()</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 2 : Standalone (Théorie)" duration="0">
+        <h2 is-upgraded>Introduction</h2>
+<p>Un composant <strong>standalone</strong> est un composant autogéré. Il n&#39;appartient pas à un <strong>module</strong> car il devient, lors de la compilation, lui même un <strong>module</strong>.</p>
+<p>La notion de <strong>standalone</strong> est en réalité qu&#39;un flag dans le decorator @Component, @Directive :</p>
+<pre><code language="language-ts" class="language-ts">@Component({
+  standalone: true,
+  selector: &#39;photo-gallery&#39;,
+  // an existing module is imported directly into a standalone component
+  imports: [MatButtonModule],
+  template: `
+    ...
+    &lt;button mat-button&gt;Next Page&lt;/button&gt;
+  `,
+})
+export class PhotoGalleryComponent {
+  // logic
+}
+</code></pre>
+<p>Ce flag va permettre de dire au compilateur Angular de créer un module lors de la compilation.</p>
+<h2 is-upgraded>Utilisation</h2>
+<p>Étant donné qu&#39;il est lui même un module, il va pouvoir être importé directement dans un module au même titre que les autres.</p>
+<p>Exemple :</p>
+<pre><code language="language-ts" class="language-ts">@NgModule({
+  declarations: [AlbumComponent],
+  exports: [AlbumComponent], 
+  imports: [PhotoGalleryComponent],
+})
+export class AlbumModule {}
+</code></pre>
+<h2 is-upgraded>Routing avec des standalone component</h2>
+<p>L&#39;avantage des <strong>standalone component</strong> est la facilité de mettre en place du lazy loading.</p>
+<p>On va écrire la même syntax, à peu de chose près que pour un module. La seule chose qui va changer c&#39;est la méthode appelée :</p>
+<pre><code language="language-ts" class="language-ts">export const ROUTES: Route[] = [
+  {path: &#39;admin&#39;, loadComponent: () =&gt; import(&#39;./admin/panel.component&#39;).then(mod =&gt; mod.AdminPanelComponent)},
+  // ...
+];
+</code></pre>
+<p>Il est possible de séparer le fichier de configuration des routes :</p>
+<pre><code language="language-ts" class="language-ts">// In the main application:
+export const ROUTES: Route[] = [
+  {path: &#39;admin&#39;, loadChildren: () =&gt; import(&#39;./admin/routes&#39;).then(mod =&gt; mod.ADMIN_ROUTES)},
+  // ...
+];
+
+// In admin/routes.ts:
+export const ADMIN_ROUTES: Route[] = [
+  {path: &#39;home&#39;, component: AdminHomeComponent},
+  {path: &#39;users&#39;, component: AdminUsersComponent},
+  // ...
+];
+</code></pre>
+<p>Depuis Angular 16, il est possible également d&#39;utiliser la notion de default, ce qui simplifie la syntaxe :</p>
+<pre><code language="language-ts" class="language-ts">// In the main application:
+export const ROUTES: Route[] = [
+  {path: &#39;admin&#39;, loadChildren: () =&gt; import(&#39;./admin/routes&#39;)},
+  // ...
+];
+
+// In admin/routes.ts:
+export default [
+  {path: &#39;home&#39;, component: AdminHomeComponent},
+  {path: &#39;users&#39;, component: AdminUsersComponent},
+  // ...
+] as Route[];
+</code></pre>
+<h3 is-upgraded>Provide un service à un ensemble de sous routes</h3>
+<p>Dans la configuration des routes, on va pouvoir utiliser le mot clé <strong>providers: [...]</strong> afin de fournir un service pour plusieurs routes et sous composants :</p>
+<pre><code language="language-ts" class="language-ts">// Main application:
+export const ROUTES: Route[] = {
+  // Lazy-load the admin routes.
+  {path: &#39;admin&#39;, loadChildren: () =&gt; import(&#39;./admin/routes&#39;).then(mod =&gt; mod.ADMIN_ROUTES)},
+  // ... rest of the routes
+}
+
+// In admin/routes.ts:
+export const ADMIN_ROUTES: Route[] = [{
+  path: &#39;&#39;,
+  pathMatch: &#39;prefix&#39;,
+  providers: [
+    //ici le service d&#39;admin est chargé pour tous les enfants 
+    AdminService,
+    {provide: ADMIN_API_KEY, useValue: 12345},
+  ],
+  children: [
+    {path: &#39;users&#39;, component: AdminUsersCmp},
+    {path: &#39;teams&#39;, component: AdminTeamsCmp},
+  ],
+}];
+</code></pre>
+<h2 is-upgraded>Bootstrap avec un standalone component</h2>
+<p>Pour supprimer l&#39;ensemble des modules, il va falloir modifier le bootstraping de l&#39;application en modifiant la méthode du fichier <strong>main.js</strong>. Les services nécessaires à l&#39;ensemble de l&#39;application seront fournis dans ce fichier.</p>
+<pre><code language="language-ts" class="language-ts">bootstrapApplication(PhotoAppComponent, {
+  providers: [
+    provideRouter([/* app routes */]),
+    importProvidersFrom(
+      LibraryModule.forRoot()
+    ),
+    // ...
+  ]
+});
+</code></pre>
+<p>Par exemple, <code>provideRouter</code> remplacera la configuration <code>RouterModule.forRoot</code>. Il en va de même avec plusieurs fonctions utilitaires.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 2 : Standalone (TP)" duration="30">
+        <ol type="1">
+<li>Migrez l&#39;application précédemment clonée vers le modèle full standalone (Plus aucun module).</li>
+<li>Réussite : Le comportement de l&#39;application est inchangé.</li>
+<li>Allez plus loin.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 3 : Control flow (Théorie)" duration="0">
+        <h2 is-upgraded>Introduction</h2>
+<p>Depuis la version 17 d&#39;Angular, une nouvelle manière d&#39;écrire les conditions et les boucles dans le template des composants a été introduite.</p>
+<p>Il est important de noter que les méthodes précédentes continuent de fonctionner.</p>
+<h3 is-upgraded>Exemple</h3>
+<p>Voici un exemple dans un composant du nouveau système de control flow :</p>
+<pre><code language="language-typescript" class="language-typescript">// user-controls.component.ts
+@Component({
+  standalone: true,
+  selector: &#39;user-controls&#39;,
+  template: `
+    @if (isAdmin) {
+      &lt;button&gt;Erase database&lt;/button&gt;
+    }
+  `,
+})
+export class UserControls {
+  isAdmin = true;
+}
+</code></pre>
+<p>Note : Pour la suite de ce document, seule la partie template sera présentée, sans le composant lui-même, afin de simplifier l&#39;explication.</p>
+<h2 is-upgraded>Condition</h2>
+<h3 is-upgraded>@If</h3>
+<p>Le template</p>
+<pre><code language="language-html" class="language-html">&lt;ng-container *ngIf=&#34;a &gt; b&#34;&gt;
+   &#123;&#123;a}} is greater than &#123;&#123;b}}
+&lt;/ng-container&gt;
+</code></pre>
+<p>devient :</p>
+<pre><code language="language-html" class="language-html">@if (a &gt; b) {
+   &#123;&#123;a}} is greater than &#123;&#123;b}}
+}
+</code></pre>
+<h3 is-upgraded>@Else</h3>
+<p>Le template</p>
+<pre><code language="language-html" class="language-html">&lt;ng-container *ngIf=&#34;a &gt; b; else cond1&#34;&gt;
+  &#123;&#123;a}} is greater than &#123;&#123;b}}
+&lt;/ng-container&gt;
+&lt;ng-template #cond1&gt;
+  &lt;ng-container *ngIf=&#34;b &gt; a; else equal&#34;&gt;
+  &#123;&#123;a}} is less than &#123;&#123;b}}
+  &lt;/ng-container&gt;
+  &lt;ng-template #equal&gt;
+  &#123;&#123;a}} is equal to &#123;&#123;b}}
+  &lt;/ng-template&gt;
+&lt;/ng-template&gt;
+</code></pre>
+<p>devient :</p>
+<pre><code language="language-html" class="language-html">@if (a &gt; b) {
+  &#123;&#123;a}} is greater than &#123;&#123;b}}
+} @else if (b &gt; a) {
+  &#123;&#123;a}} is less than &#123;&#123;b}}
+} @else {
+  &#123;&#123;a}} is equal to &#123;&#123;b}}
+}
+</code></pre>
+<h3 is-upgraded>Variable @If</h3>
+<p>Il est toujours possible de créer une variable HTML avec la syntaxe :</p>
+<pre><code language="language-html" class="language-html">@if (users$ | async; as users) {
+  &#123;&#123; users.length }}
+}
+</code></pre>
+<h3 is-upgraded>@Switch</h3>
+<p>Le template :</p>
+<pre><code language="language-html" class="language-html">&lt;ng-container [ngSwitch]=&#34;condition&#34;&gt;
+  &lt;ng-container *ngSwitchCase=&#34;&#39;caseA&#39;&#34;&gt;Case A.&lt;/ng-container&gt;
+  &lt;ng-container *ngSwitchCase=&#34;&#39;caseB&#39;&#34;&gt;Case B.&lt;/ng-container&gt;
+  &lt;ng-container *ngSwitchDefault&gt;Default case.&lt;/ng-container&gt;
+&lt;/ng-container&gt;
+</code></pre>
+<p>devient :</p>
+<pre><code language="language-html" class="language-html">@switch (condition) {
+  @case (caseA) {
+    Case A.
+  }
+  @case (caseB) {
+    Case B.
+  }
+  @default {
+    Default case.
+  }
+}
+</code></pre>
+<h2 is-upgraded>Boucle</h2>
+<h3 is-upgraded>@For</h3>
+<p>Le template</p>
+<pre><code language="language-html" class="language-html">&lt;ng-container *ngFor=&#34;let item of items&#34;&gt;&#123;&#123; item.name }}&lt;/ng-container&gt;
+</code></pre>
+<p>devient :</p>
+<pre><code language="language-html" class="language-html">@for (item of items; track item.id) {
+  &#123;&#123; item.name }}
+}
+</code></pre>
+<p>Il est toujours possible d&#39;utiliser les variables contextuelles de la directive @for.</p>
+<pre><code language="language-html" class="language-html">@for (item of items; track item.id; let idx = $index, e = $even) {
+  Item #&#123;&#123; idx }}: &#123;&#123; item.name }}
+}
+</code></pre>
+<p>Voici les variables contextuelles disponibles :</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Variable contextuel</p>
+</td><td colspan="1" rowspan="1"><p>Signification</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$count</p>
+</td><td colspan="1" rowspan="1"><p>Nombre d&#39;éléments dans la collection</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$index</p>
+</td><td colspan="1" rowspan="1"><p>Index de la ligne</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$first</p>
+</td><td colspan="1" rowspan="1"><p>True si c&#39;est la première ligne</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$last</p>
+</td><td colspan="1" rowspan="1"><p>True si c&#39;est la dernière ligne</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$even</p>
+</td><td colspan="1" rowspan="1"><p>True si la ligne est paire</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>$odd</p>
+</td><td colspan="1" rowspan="1"><p>True si la ligne est impaire</p>
+</td></tr>
+</table>
+<h4 is-upgraded>Track</h4>
+<p>Lorsqu&#39;Angular affiche une liste d&#39;éléments avec @for, ces éléments peuvent être modifiés ou déplacés ultérieurement. Angular doit suivre chaque élément lors de toute réorganisation, généralement en traitant une propriété de l&#39;élément comme un identifiant ou une clé unique.</p>
+<p>Cela garantit que toutes les mises à jour de la liste sont correctement reflétées dans l&#39;interface utilisateur et correctement suivies dans Angular, en particulier dans le cas d&#39;éléments ou d&#39;animations avec état.</p>
+<p>Pour ce faire, nous pouvons fournir une clé unique à Angular avec le mot-clé track.</p>
+<p>Il est également possible de fournir une fonction comme préalablement avec le mot clé trackBy dans la directive ngFor :</p>
+<pre><code language="language-html" class="language-html">@for (item of items; track itemId($index, item)) {
+  &#123;&#123; item.name }}
+}
+</code></pre>
+<h3 is-upgraded>@Empty</h3>
+<p>Le template :</p>
+<pre><code language="language-html" class="language-html">&lt;ng-container *ngIf=&#34;item.length; else empty&#34;&gt;
+  &lt;li *ngFor=&#34;let item of items&#34;&gt; &#123;&#123; item.name }} &lt;/li&gt;
+&lt;/ng-container&gt;
+&lt;ng-template #empty&gt;
+  &lt;li&gt; There are no items. &lt;/li&gt;
+&lt;/ng-template&gt;
+</code></pre>
+<p>devient :</p>
+<pre><code language="language-html" class="language-html">@for (item of items; track item.name) {
+  &lt;li&gt; &#123;&#123; item.name }} &lt;/li&gt;
+} @empty {
+  &lt;li&gt; There are no items. &lt;/li&gt;
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 3 : Control flow (TP)" duration="20">
+        <ol type="1">
+<li>Migrez l&#39;application précédemment clonée vers le modèle full control-flow.</li>
+<li>Réussite : Le comportement de l&#39;application est inchangé.</li>
+<li>Allez plus loin.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 4 : Formulaire typé (Théorie)" duration="0">
+        <h2 is-upgraded>Typage</h2>
+<p>Depuis <strong>Angular 14</strong> il est possible et recommandé de typer ses formulaires. Cette pratique permet d&#39;utiliser au mieux les possibilités du langage Typescript afin d&#39;avoir un retour au plus tôt sur des erreurs éventuelles de type de données.</p>
+<p>Voici un exemple de formulaire typé :</p>
+<pre><code language="language-typescript" class="language-typescript">const login = new FormGroup({
+    email: new FormControl(&#39;&#39;),
+    password: new FormControl(&#39;&#39;),
+});
+</code></pre>
+<p>Ici, les champs <strong>email</strong> et <strong>password</strong> sont typés en <strong>string</strong>. Cela est possible via l&#39;inférence de type.</p>
+<h3 is-upgraded>L&#39;inférence de type c&#39;est quoi ?</h3>
+<p>L&#39;ínférence de type c&#39;est lorsqu&#39;on ne type pas explicitement le formulaire. On laisse le compilateur faire le travail pour nous.</p>
+<p>Dans l&#39;exemple précédent, le compilateur lit la valeur initiale. C&#39;est un <strong>string</strong> alors le compilateur positionne le champ en tant que <strong>string</strong>.</p>
+<h3 is-upgraded>Avantage du typage</h3>
+<p>Le typage permet d&#39;avoir des erreurs de compilation lorsque vous utilisez cette notation par exemple :</p>
+<pre><code language="language-typescript" class="language-typescript">const emailDomain = login.value.email.domain; -&gt; Erreur
+</code></pre>
+<h3 is-upgraded>Null ou undefined ??</h3>
+<p>En réalité, c&#39;est un peu plus complexe que cela. Le type n&#39;est pas simplement <strong>string</strong> mais <strong>string | undefined | null</strong>.</p>
+<h4 is-upgraded>Pourquoi <strong>null</strong> ?</h4>
+<p>Sur un <strong>AbstractForm</strong>, on peut utiliser la méthode <strong>reset</strong> qui va positionner la valeur <strong>null</strong> par défaut. Il est donc possible d&#39;avoir la valeur <strong>null</strong> pour l&#39;ensemble des champs du formulaire.</p>
+<p>On peut changer ce comportement par défaut en ajoutant une option sur le champs de la façon suivante :</p>
+<pre><code language="language-typescript" class="language-typescript">const email = new FormControl(&#39;angularrox@gmail.com&#39;, {nonNullable: true});
+email.reset();
+console.log(email.value); // angularrox@gmail.com
+</code></pre>
+<p>Dans ce cas présent, la valeur positionnée par la méthode <strong>reset</strong> sera la valeur initiale.</p>
+<h4 is-upgraded>Pourquoi <strong>undefined</strong> ?</h4>
+<p>Un <strong>AbstractControl</strong> peut être désactivé. Lorsqu&#39;un champ est disable, alors la valeur retournée par le getter <strong>value</strong> est <strong>undefined</strong>.</p>
+<p>Il est possible d&#39;éviter cette problèmatique en utilisant la méthode <strong>getRawValue</strong> à la place du getter <strong>value</strong>. Cette méthode permet de lire les valeurs des champs disable.</p>
+<p>Attention: L&#39;usage de <strong>getRawValue</strong> peut ne pas pas avoir le comportement attendu !</p>
+<h3 is-upgraded>Typage explicite</h3>
+<h4 is-upgraded>Typage du FormControl</h4>
+<p>Parfois l&#39;inférence de type n&#39;est pas possible. Dans ce cas, on va pouvoir utiliser le typage explicite.</p>
+<p>Pour typer explicitement, on va positionner entre chevron les types que le champ aura le droit de prendre de la façon suivante :</p>
+<pre><code language="language-typescript" class="language-typescript">const email = new FormControl&lt;string|null&gt;(null);
+email.setValue(&#39;angularrox@gmail.com&#39;);
+</code></pre>
+<p>Attention: Le champ <strong>email</strong> peut être disable. Donc il peut avoir la valeur <strong>undefined</strong> même si vous ne l&#39;avez pas noté explicitement.</p>
+<h4 is-upgraded>Typage du FormGroup</h4>
+<p>Il est également possible de typer le <strong>FormGroup</strong> complet sans avoir à décrire champ par champ.</p>
+<p>Pour faire cela, on va créer un nouveau type qu&#39;on va attribuer, entre chevrons, au <strong>FormGroup</strong>.</p>
+<pre><code language="language-typescript" class="language-typescript">const FormGroupType = {
+  count: FormControl&lt;number | null&gt;;
+}
+
+formGroup = new FormGroup&lt;FormGroupType&gt;({
+  count: new FormControl(null)
+});
+</code></pre>
+<p>Le code ci-dessus sera équivalent à celui-ci :</p>
+<pre><code language="language-typescript" class="language-typescript">formGroup = new FormGroup({
+  count: new FormControl&lt;number | null&gt;(null)
+});
+</code></pre>
+<p>Attention: Le champs <strong>count</strong> peut être disable. Donc il peut avoir la valeur <strong>undefined</strong> même si vous ne l&#39;avez pas noté explicitement.</p>
+<h4 is-upgraded>Erreur possible - Types of property ‘xxx&#39; are incompatible</h4>
+<pre><code language="language-typescripts" class="language-typescripts">formGroup.count = {value: null} ou {value: 12}
+
+type FormValue = {
+  count: null | number;
+}
+
+function test(val: FormValue) {...}
+
+test(formGroup.count) =&gt; error
+</code></pre>
+<p><strong>Ne pas oublier le cas du champ disabled</strong></p>
+<pre><code>Types of property &#39;count&#39; are incompatible.
+    Type &#39;number | null | undefined&#39; is not assignable to type &#39;number | null&#39;.
+      Type &#39;undefined&#39; is not assignable to type &#39;number | null&#39;.
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 4 : Formulaire typé (TP)" duration="30">
+        <ol type="1">
+<li>Migrer le formulaire pour un formulaire typé</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 5 : Signals (Théorie)" duration="0">
+        <h2 is-upgraded>Introduction</h2>
+<p><strong>Signal</strong> est une nouveauté Angular 16. Cela correspond à un observable qui va informer les consommateurs qui l&#39;écoute lorsqu&#39;il change de valeur. Il peut contenir n&#39;importe quelle valeur. Un <strong>signal</strong> peut être <strong>writable</strong> ou <strong>read-only</strong>.</p>
+<p>Exemple :</p>
+<pre><code language="language-ts" class="language-ts">const count: WritableSignal&lt;number&gt; = signal(0);
+
+// Signals are getter functions - calling them reads their value.
+console.log(&#39;The count is: &#39; + count());
+</code></pre>
+<p>On peut changer la valeur du signal via la méthode <strong>set</strong> :</p>
+<pre><code language="language-ts" class="language-ts">count.set(3);
+</code></pre>
+<p>Ou par la méthode <strong>update</strong> qui permet de mettre à jour la valeur en fonction de la valeur précédente :</p>
+<pre><code language="language-ts" class="language-ts">// Increment the count by 1.
+count.update(value =&gt; value + 1);
+</code></pre>
+<p>Lorsqu&#39;on utilise un <strong>signal</strong> contenant un objet. Il est possible de modifier l&#39;objet sans le remplacer via la méthode <strong>mutate</strong> :</p>
+<pre><code language="language-ts" class="language-ts">const todos = signal([{title: &#39;Learn signals&#39;, done: false}]);
+
+todos.mutate(value =&gt; {
+  // Change the first TODO in the array to &#39;done: true&#39; without replacing it.
+  value[0].done = true;
+});
+</code></pre>
+<p>Note : un <strong>signal read-only</strong> à uniquement le type <strong>Signal</strong></p>
+<h2 is-upgraded>Computed signals</h2>
+<p>On s&#39;abonne aux modifications d&#39;un <strong>WritableSignal</strong> via la méthode <strong>computed</strong> :</p>
+<pre><code language="language-ts" class="language-ts">const count: WritableSignal&lt;number&gt; = signal(0);
+const doubleCount: Signal&lt;number&gt; = computed(() =&gt; count() * 2);
+</code></pre>
+<p><strong>doubleCount</strong> sera mis à jour à chaque mise à jour de <strong>count</strong>.</p>
+<p>Note: le résultat de la méthode <strong>computed</strong> est <strong>read only</strong>. On ne peut donc pas utiliser la méthode <strong>set</strong>, <strong>update</strong> ou <strong>mutate</strong> sur ce résultat.</p>
+<p>La méthode <strong>computed</strong> peut s&#39;executer suite à l&#39;écoute de plusieurs <strong>signals</strong> :</p>
+<pre><code language="language-ts" class="language-ts">const showCount = signal(false);
+const count = signal(0);
+const conditionalCount = computed(() =&gt; {
+  if (showCount()) {
+    return `The count is ${count()}.`;
+  } else {
+    return &#39;Nothing to see here!&#39;;
+  }
+});
+</code></pre>
+<p>Dans cet exemple, <strong>conditionalCount</strong> dépend de <strong>count</strong> et de <strong>showCount</strong>.</p>
+<h2 is-upgraded>Effects</h2>
+<p>Une fonction <strong>effect</strong> est une fonction qui va s&#39;executer lorsqu&#39;un <strong>signal</strong> est mis à jour :</p>
+<pre><code language="language-ts" class="language-ts">effect(() =&gt; {
+  console.log(`The current count is: ${count()}`);
+});
+</code></pre>
+<p>Note : La méthode <strong>effect</strong> est toujours lancée au moins une fois.</p>
+<p>Attention, cette méthode peut engendrer des erreurs comme celle-ci : <strong>ExpressionChangedAfterItHasBeenChecked</strong>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 5 : Signals (TP)" duration="20">
+        <ol type="1">
+<li>Simplifier l&#39;écriture du service <code>shopping.service.ts</code> et de tout les composants associés en utilisant les signals.`</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 6 : Balise image (Théorie)" duration="0">
+        <h2 is-upgraded>Introduction</h2>
+<p>Depuis Angular 15, Angular a ajouté une nouvelle directive de gestion de chargement d&#39;image <code>NgOptimizedImage</code>. Cette balise à pour objectif :</p>
+<ul>
+<li>Utilisation des URLs CDN d&#39;images pour appliquer des optimisations de chargement</li>
+<li>Empêcher le changement de disposition en exigeant une largeur et une hauteur</li>
+<li>Avertissement si la largeur ou la hauteur ont été mal réglées (erreur ratio)</li>
+<li>Avertissement si l&#39;image sera visuellement déformée lors du rendu (erreur ratio)</li>
+</ul>
+<h2 is-upgraded>Utilisation</h2>
+<h3 is-upgraded>Import</h3>
+<p><code>NgOptimizedImage</code> est une directive standalone et donc doit être importée pour pouvoir être utilisée.</p>
+<pre><code language="language-typescript" class="language-typescript">import { NgOptimizedImage } from &#39;@angular/common&#39;
+...
+imports: [
+  NgOptimizedImage,
+  // ...
+],
+</code></pre>
+<h3 is-upgraded>Utilisation de la directive</h3>
+<p>Il suffit de remplacer l&#39;attribut <code>src</code> par <code>ngSrc</code>.</p>
+<pre><code language="language-html" class="language-html">&lt;img ngSrc=&#34;cat.jpg&#34;&gt;
+</code></pre>
+<p>Note : Si vous utilisez un chargeur tiers intégré, assurez-vous d&#39;omettre le chemin de l&#39;URL de base de <code>src</code>, car il sera automatiquement ajouté au début par le chargeur.</p>
+<h3 is-upgraded>Width &amp; Height</h3>
+<p>Lors de l&#39;usage de l&#39;attribut <code>ngSrc</code>, il est obligatoire d&#39;attribuer à l&#39;image une taille fixe (width et height). Cela permet de conserver l&#39;espace nécessaire à l&#39;affichage de l&#39;image, de sorte qu&#39;après son chargement, aucune modification de la mise en page ne soit visibile à l&#39;écran.</p>
+<pre><code language="language-html" class="language-html">&lt;img ngSrc=&#34;cat.jpg&#34; width=&#34;400&#34; height=&#34;200&#34;&gt;
+</code></pre>
+<p>Note : Dans les cas où vous souhaitez qu&#39;une image remplisse un élément conteneur, vous pouvez utiliser l&#39;attribut <code>fill</code>. Ceci est souvent utile lorsque vous désirez obtenir un comportement &#34;image d&#39;arrière-plan&#34;. Cela peut également être utile lorsque vous ne connaissez pas la largeur et la hauteur exactes de votre image, mais que vous disposez d&#39;un conteneur parent avec une taille connue dans lequel vous souhaitez insérer votre image (voir « ajustement d&#39;objet » ci-dessous).</p>
+<pre><code language="language-html" class="language-html">&lt;img ngSrc=&#34;cat.jpg&#34; fill&gt;
+</code></pre>
+<p>Si le ratio de l&#39;image est différent de sa taille configuré, alors un message d&#39;avertissement sera notifié dans la console. Pour résoudre ce problème, vous pouvez utiliser les valeurs <code>auto</code> pour les attributs height et width.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 6 : Balise image (TP)" duration="5">
+        <ol type="1">
+<li>Changer la façon d&#39;importer les images pour utiliser la nouvelle directive.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 7 : Defer (Théorie)" duration="0">
+        <h2 is-upgraded>@defer</h2>
+<p>Les blocks defer sont un peu particulier. Les templates et les dépendances de ces templates ne seront chargés uniquement que lorsque les conditions de chargement sont respectées.</p>
+<p>Les blocks @defer prennent en charge une série de déclencheurs, de prélecture et plusieurs sous-blocs utilisés pour la gestion des espaces réservés, du chargement et de l&#39;état d&#39;erreur.</p>
+<pre><code language="language-html" class="language-html">@defer {
+  &lt;large-component /&gt;
+}
+</code></pre>
+<p>Les vues différées, également appelées blocs @defer, sont des outils puissant qui peuvent être utilisés pour réduire la taille initiale du bundle de votre application ou différer le chargement des composants lourds qui ne seront peut-être jamais chargés ou chargés à une date ultérieure. L&#39;objectif est d&#39;entraîner un chargement initial plus rapide.</p>
+<p>Note : Attention, lorsqu&#39;un block @defer se charge, celui-ci peut entrainer un changement succeptible de modifier la disposition de la page pour l&#39;utilisateur.</p>
+<p>Pour que les dépendances au sein d&#39;un bloc @defer soient différées, elles doivent remplir deux conditions :</p>
+<ul>
+<li>Elles doivent être autonomes. Les dépendances non autonomes ne peuvent pas être différées et seront toujours chargées avec impatience, même à l&#39;intérieur des blocs @defer.</li>
+<li>Elles ne doivent pas être directement référencés depuis le même fichier, en dehors des blocs @defer ; cela inclut les requêtes ViewChild.</li>
+</ul>
+<p>Les blocs @defer ont plusieurs sous-blocs pour vous permettre de gérer différentes étapes du processus de chargement différé.</p>
+<h2 is-upgraded>@placeholder</h2>
+<p>@placeholder Par défaut, le bloc @defer ne rend aucun contenu avant d&#39;être déclenché. Le @placeholder est un bloc facultatif qui déclare le contenu à afficher pour ce cas d&#39;usage. Ce contenu d&#39;espace réservé est remplacé par le contenu principal une fois le chargement terminé.</p>
+<p>Note : Pour une expérience utilisateur optimale, vous devez toujours spécifier un bloc @placeholder.</p>
+<p>Le bloc @placeholder accepte un paramètre facultatif pour spécifier la durée minimale pendant laquelle cet espace réservé doit être affiché. Ce paramètre minimum est spécifié en incréments de temps de millisecondes (ms) ou de secondes (s). Ce paramètre existe pour empêcher le scintillement rapide du contenu de l&#39;espace réservé dans le cas où les dépendances différées sont récupérées rapidement. Le minuteur minimum pour le bloc @placeholder commence une fois le rendu initial de ce bloc @placeholder terminé.</p>
+<p>Note : Les dépendances du contenu du bloc @placeholder sont chargées immédiatement au chargement.</p>
+<pre><code language="language-html" class="language-html">@defer {
+  &lt;large-component /&gt;
+} @placeholder (minimum 500ms) {
+  &lt;p&gt;Placeholder content&lt;/p&gt;
+}
+</code></pre>
+<p>Note : Certains déclencheurs peuvent nécessiter la présence d&#39;un @placeholder ou d&#39;une variable de référence de modèle pour fonctionner. Voir la section Déclencheurs pour plus de détails.</p>
+<h2 is-upgraded>@loading</h2>
+<p>Le bloc @loading est un bloc facultatif qui permet de déclarer le contenu qui sera affiché lors du chargement d&#39;éventuelles dépendances différées. Par exemple, vous pouvez afficher une icône de chargement. Semblable à @placeholder, les dépendances du bloc @loading sont chargées immédiatement au chargement.</p>
+<p>Le bloc @loading accepte deux paramètres facultatifs pour spécifier la durée minimale d&#39;affichage de cet espace réservé et la durée d&#39;attente après le début du chargement avant d&#39;afficher le modèle de chargement. Les paramètres minimum et after sont spécifiés par incréments de temps de millisecondes (ms) ou de secondes (s). Tout comme @placeholder, ces paramètres existent pour empêcher le scintillement rapide du contenu dans le cas où les dépendances différées sont récupérées rapidement. Les minuteries minimale et ultérieure du bloc @loading commencent immédiatement après le déclenchement du chargement.</p>
+<pre><code language="language-html" class="language-html">@defer {
+  &lt;large-component /&gt;
+} @loading (after 100ms; minimum 1s) {
+  &lt;img alt=&#34;loading...&#34; src=&#34;loading.gif&#34; /&gt;
+}
+</code></pre>
+<h2 is-upgraded>@error</h2>
+<p>Le bloc @error vous permet de déclarer le contenu qui sera affiché en cas d&#39;échec du chargement différé. Semblable à @placeholder et @loading, les dépendances du bloc @error sont chargées immédiatement au chargement. Le bloc @error est facultatif.</p>
+<pre><code language="language-html" class="language-html">@defer {
+  &lt;calendar-cmp /&gt;
+} @error {
+  &lt;p&gt;Failed to load the calendar&lt;/p&gt;
+}
+</code></pre>
+<h2 is-upgraded>Triggers</h2>
+<p>Lorsqu&#39;un block @defer est déclenché, il remplace le placeholder avec le contenu lazy loaded. Il existe deux options pour configurer ce déclenchement : on et when.</p>
+<h3 is-upgraded>on</h3>
+<p><strong>on</strong> spécifie une condition de déclenchement utilisant un déclencheur de la liste des déclencheurs disponibles ci-dessous. Un exemple serait sur l&#39;interaction ou sur la fenêtre d&#39;affichage.</p>
+<p>Plusieurs déclencheurs d&#39;événements peuvent être définis simultanément. Par exemple : sur l&#39;interaction ; on timer(5s) signifie que le bloc @defer sera déclenché si l&#39;utilisateur interagit avec l&#39;espace réservé, ou après 5 secondes.</p>
+<p>Remarque : Plusieurs déclencheurs activés sont toujours des conditions OU. De même, les conditions mélangées avec quand sont également des conditions OU.</p>
+<pre><code language="language-html" class="language-html">@defer (on viewport; on timer(5s)) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;img src=&#34;placeholder.png&#34; /&gt;
+}
+</code></pre>
+<ul>
+<li>viewport la fenêtre d&#39;affichage (viewport) déclencherait le bloc @defer lorsque le contenu spécifié entre dans la fenêtre d&#39;affichage à l&#39;aide de l&#39;API IntersectionObserver. Il peut s&#39;agir du contenu d&#39;un espace réservé ou d&#39;une référence d&#39;élément.</li>
+</ul>
+<p>Par défaut, l&#39;espace réservé agira comme l&#39;élément surveillé pour entrer dans la fenêtre d&#39;affichage tant qu&#39;il s&#39;agit d&#39;un nœud d&#39;élément racine unique.</p>
+<pre><code language="language-html" class="language-html">@defer (on viewport) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+<p>Vous pouvez également spécifier une variable de référence de modèle dans le même modèle que le bloc @defer en tant qu&#39;élément surveillé pour entrer dans la fenêtre. Cette variable est transmise en tant que paramètre sur le déclencheur de la fenêtre d&#39;affichage.</p>
+<pre><code language="language-html" class="language-html">&lt;div #greeting&gt;Hello!&lt;/div&gt;
+@defer (on viewport(greeting)) {
+  &lt;greetings-cmp /&gt;
+}
+</code></pre>
+<ul>
+<li>timer timer(x) se déclenchera après une durée spécifiée. La durée est obligatoire et peut être spécifiée en ms ou s.</li>
+</ul>
+<pre><code language="language-html" class="language-html">@defer (on timer(500ms)) {
+  &lt;calendar-cmp /&gt;
+}
+</code></pre>
+<ul>
+<li>idle : Idle déclenchera le chargement différé une fois que le navigateur aura atteint un état d&#39;inactivité (détecté à l&#39;aide de l&#39;API requestIdleCallback). C&#39;est le comportement par défaut avec un bloc @defer.</li>
+<li>interaction l&#39;interaction déclenchera le bloc @defer lorsque l&#39;utilisateur interagit avec l&#39;élément spécifié via des événements de clic ou de frappe.</li>
+</ul>
+<pre><code language="language-html" class="language-html">@defer (on interaction) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+<p>Vous pouvez également spécifier une variable de référence de modèle comme élément déclenchant l&#39;interaction. Cette variable est transmise en tant que paramètre sur le déclencheur d&#39;interaction.</p>
+<pre><code language="language-html" class="language-html">&lt;button type=&#34;button&#34; #greeting&gt;Hello!&lt;/button&gt;
+@defer (on interaction(greeting)) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+<ul>
+<li>hover le survol déclenche un lazy loading lorsque la souris survole la zone de déclenchement.</li>
+</ul>
+<p>Par défaut, l&#39;espace réservé servira d&#39;élément de survol tant qu&#39;il s&#39;agit d&#39;un nœud d&#39;élément racine unique.</p>
+<pre><code language="language-html" class="language-html">@defer (on hover) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+<p>Vous pouvez également spécifier une variable de référence de modèle comme élément de survol. Cette variable est transmise en tant que paramètre sur le déclencheur de survol.</p>
+<pre><code language="language-html" class="language-html">&lt;div #greeting&gt;Hello!&lt;/div&gt;
+@defer (on hover(greeting)) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+<ul>
+<li>immediate <strong>immediate</strong> déclenche immédiatement le chargement différé, ce qui signifie qu&#39;une fois que le client a terminé le rendu, le bloc @defer commencerait alors à être récupéré immédiatement.</li>
+</ul>
+<pre><code language="language-html" class="language-html">@defer (on immediate) {
+  &lt;calendar-cmp /&gt;
+} @placeholder {
+  &lt;div&gt;Calendar placeholder&lt;/div&gt;
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Partie 7 : Defer (TP)" duration="10">
+        <ol type="1">
+<li>Modifier la partie suivante du <code>recipe-list</code> de façon à prefetch uniquement au survol du bouton et de charger uniquement lors du clic.</li>
+</ol>
+<pre><code language="language-html" class="language-html">&lt;button *ngIf=&#34;!displayIdeas&#34; (click)=&#34;displayIdeas = true&#34;&gt;&lt;mat-icon fontIcon=&#34;people&#34; /&gt;&lt;/button&gt;
+&lt;app-ideas *ngIf=&#34;!!displayIdeas&#34; /&gt;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

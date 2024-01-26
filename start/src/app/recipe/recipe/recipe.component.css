@@ -1,0 +1,9 @@
+img {
+    position: relative !important;
+    object-fit: cover;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+}

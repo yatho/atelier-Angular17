@@ -1,0 +1,42 @@
+<section>
+    <table>
+        <tr>
+            <td>Nom de la recette:</td>
+            <td>{{recipe.name}}</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>{{recipe.type}}</td>
+        </tr>
+    </table>
+
+    <section>
+        <h2>Liste des ingrédients</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Quantité</th>
+                    <th>Nom</th>
+                    <th>Unité</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let ingredient of recipe.ingredients">
+                    <td>{{ingredient.quantity}}</td>
+                    <td>{{ingredient.name}}</td>
+                    <td>{{ingredient.unit}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Comment Faire ?</h2>
+        <ul>
+            <li *ngFor="let how of recipe.instructions">{{how}}</li>
+        </ul>
+    </section>
+</section>
+<section class="actions">
+    <button mat-button color="primary" routerLink="edit">Mettre à jour la recette</button>
+</section>

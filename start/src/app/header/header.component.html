@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+    <nav>
+        <button mat-button routerLink="recipes" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            Liste des recettes
+        </button>
+        <button mat-button routerLink="recipes/create" routerLinkActive="active">
+            Créer une recette
+        </button>
+        <button mat-button routerLink="recipes/shopping" routerLinkActive="active" [matBadge]="(recipeSelectedEvent | async)?.length ?? 0" matBadgeColor="warn">
+            Liste de courses
+        </button>
+    </nav>
+</mat-toolbar>

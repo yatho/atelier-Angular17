@@ -1,0 +1,31 @@
+<section>
+    <table>
+        <tr>
+            <td>Nom de la recette</td>
+            <td>{{recipe.name}}</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>{{recipe.type}}</td>
+        </tr>
+        <!-- <tr>
+            <td>Version</td>
+            <td>{{recipe.version}}</td>
+        </tr> -->
+    </table>
+
+    <section class="row">
+        <section>
+            <h2>Liste des Ingrédients</h2>
+            <ul>
+                <li *ngFor="let ingredient of recipe.ingredients">{{ingredient}}</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Comment Faire ?</h2>
+            <ul>
+                <li *ngFor="let how of recipe.instructions">{{how}}</li>
+            </ul>
+        </section>
+    </section>
+</section>

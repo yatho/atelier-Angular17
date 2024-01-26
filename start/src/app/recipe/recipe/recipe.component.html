@@ -1,0 +1,11 @@
+<ng-container *ngIf="!!recipe">
+    <img *ngIf="recipe.photo" [src]="recipe.photo">
+
+    <h1>Recette {{recipe.name}}</h1>
+
+    <ng-container [ngSwitch]="recipe.version"> 
+            <app-v1 *ngSwitchCase="'v1'" [recipe]="$any(recipe)"></app-v1>
+            <app-v2 *ngSwitchCase="'v2'" [recipe]="$any(recipe)"></app-v2>
+    </ng-container>
+    <button mat-button (click)="stockerIngredient(recipe)" color="accent">Ajouter à la liste de course</button>
+</ng-container>

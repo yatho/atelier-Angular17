@@ -1,0 +1,27 @@
+<section *ngIf="!recipeList.length else listTpl">
+    <h1>Aucune recette sélectionnée</h1>
+</section>
+
+<ng-template #listTpl>
+    <section>
+        <h1>Liste des ingrédients à acheter</h1>
+        <ul>
+            <li *ngFor="let shoppingItem of shoppingList">
+                {{shoppingItem}}
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h1>
+            Recette prévues
+        </h1>
+        <ul>
+            <li *ngFor="let recipe of recipeList">
+                {{recipe.type}} : {{recipe.name}} <button (click)="removeSelectedRecipe(recipe)"><mat-icon fontIcon="clear"></mat-icon></button>
+            </li>
+        </ul>
+        <section>
+            <button (click)="clearAllRecipeSelected()"><mat-icon fontIcon="clear"></mat-icon> Supprimer toutes les recettes sélectionnées</button>
+        </section>
+    </section>
+</ng-template>

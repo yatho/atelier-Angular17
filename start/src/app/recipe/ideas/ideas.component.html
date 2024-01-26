@@ -1,0 +1,10 @@
+<h1>Quelques photos pour vous mettre l'eau à la bouche</h1>
+
+<ng-container *ngIf="beefIdeas |async as beefs">
+    <table>
+        <tr *ngFor="let idea of beefs.meals">
+            <td>{{idea.strMeal}}</td>
+            <td><img [src]="idea.strMealThumb" width="100" height="100"></td>
+        </tr>
+    </table>
+</ng-container>

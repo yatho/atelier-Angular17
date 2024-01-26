@@ -1,0 +1,23 @@
+.loader {
+    height: 4.5px;
+    background: linear-gradient(#474bff 0 0), linear-gradient(#474bff 0 0),lightgray;
+    background-size: 60% 100%;
+    background-repeat: no-repeat;
+    animation: progress 3s infinite;
+ }
+
+ .loading {
+    opacity: 0.3;
+ }
+ 
+ @keyframes progress {
+    0% {
+        background-position: -150% 0,-150% 0;
+    }
+    50% {
+        background-position: 250% 0,-150% 0;
+    }
+    100% {
+        background-position: 250% 0, 250% 0;
+    }
+ }

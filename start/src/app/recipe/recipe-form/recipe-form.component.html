@@ -1,0 +1,126 @@
+<form [formGroup]="formGroup">
+    @if (!!formGroup.get('id')?.value) {
+      <h1>Editer</h1>
+    } @else {
+      <h1>Créer</h1>
+    }
+    <mat-stepper orientation="vertical">
+      <mat-step>
+        <ng-template matStepLabel>Metadata de la recette</ng-template>
+        <ng-template matStepContent>
+          <section class="stepContent">
+            <mat-form-field>
+              <mat-label>Nom</mat-label>
+              <input formControlName="name" matInput>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Type</mat-label>
+              <mat-select formControlName="type">
+                @for (type of recipeTypes; track type) {
+                  <mat-option [value]="type">{{type}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <section class="actions">
+              <button mat-button matStepperNext>Suivant</button>
+            </section>
+          </section>
+        </ng-template>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Liste des ingrédients</ng-template>
+        <ng-template matStepContent>
+          <section class="stepContent" formArrayName="ingredients">
+            <h2>Liste des ingrédients :</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Quantité</th>
+                  <th>Unité de mesure</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ingredient of ingredientsForm.controls; track ingredient; let i = $index) {
+                  <tr
+                    [formGroupName]="i">
+                    <td>
+                      <mat-form-field>
+                        <mat-label>Nom</mat-label>
+                        <input formControlName="name" matInput>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field>
+                        <mat-label>Nombre</mat-label>
+                        <input formControlName="quantity" matInput type="number">
+                      </mat-form-field>
+                    </td>
+                    <td><mat-form-field>
+                      <mat-label>Unité de mesure</mat-label>
+                      <mat-select formControlName="unit">
+                        @for (unit of unitOfMeasure; track unit) {
+                          <mat-option
+                          [value]="unit">{{unit}}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <button mat-button (click)="removeIngredientAt(i)">
+                      <mat-icon fontIcon="clear"></mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+        <button mat-button color="warn" (click)="addIngredient()">Ajouter un ingrédient</button>
+        <section class="actions">
+          <button mat-button matStepperPrevious>Précédent</button>
+          <button mat-button matStepperNext>Suivant</button>
+        </section>
+      </ng-template>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Liste d'instructions</ng-template>
+      <ng-template matStepContent>
+        <section class="stepContent" formArrayName="instructions">
+          <h2>Liste d'instructions :</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Instructions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (instruction of instructionsForm.controls; track instruction; let i = $index) {
+                <tr>
+                  <td>
+                    <mat-form-field>
+                      <mat-label>Instruction</mat-label>
+                      <input [formControlName]="i" matInput>
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <button mat-button (click)="removeInstructiontAt(i)"><mat-icon
+                    fontIcon="clear"></mat-icon></button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+        <button mat-button color="warn" (click)="addInstruction()">Ajouter une instruction</button>
+        <section class="actions">
+          <button mat-button matStepperPrevious>Précédent</button>
+        </section>
+      </ng-template>
+    </mat-step>
+  </mat-stepper>
+  <section class="actions">
+    <button mat-button color="primary" routerLink="..">Annuler</button>
+    <button mat-raised-button color="primary" [disabled]="formGroup.invalid" (click)="saveRecipe()">Sauvegarder</button>
+  </section>
+  </form>

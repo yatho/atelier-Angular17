@@ -1,0 +1,22 @@
+<h1 class="title">Liste des recettes disponibles</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Nom</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let recipe of recipes" [routerLink]="[recipe.id]">
+            <td>{{recipe.type}}</td>
+            <td>{{recipe.name}}</td>
+        </tr>
+    </tbody>
+</table>
+<section class="actions">
+    <button mat-button color="primary" [routerLink]="'create'">Créer une recette</button>
+</section>
+
+<button *ngIf="!displayIdeas" (click)="displayIdeas = true"><mat-icon fontIcon="people" /></button>
+<app-ideas *ngIf="!!displayIdeas" />

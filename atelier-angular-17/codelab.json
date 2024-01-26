@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2024-01-26T17:09:21+01:00",
+  "id": "atelier-angular-17",
+  "duration": 135,
+  "title": "Atelier angular 17",
+  "summary": "Atelier Angular 17",
+  "source": "atelier.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "angular",
+    "atelier",
+    "bonnespratiques"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/yatho/atelier-Angular17.git",
+  "url": "atelier-angular-17"
+}
