@@ -1,3 +1,8 @@
 tasks:
     - init: cd start && npm install
-    - command: cd start && npm start
+
+ports:
+    - port: 4200
+      onOpen: open-preview
+      name: Website
+      description: Website Preview
