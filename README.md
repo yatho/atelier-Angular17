@@ -15,3 +15,7 @@ Utiliser la commande *claat* comme suit : ```claat export atelier.md```.
 ## Atelier
 
 L'atelier est disponible en suivant ce [lien](https://yatho.github.io/atelier-Angular17/atelier-angular-17/).
+
+## Gitpod
+
+Vous pouvez commencer à suivre cet atelier directement depuis votre navigateur en cliquant sur le lien [gitpod](https://gitpod.io/new/#https://github.com/yatho/atelier-angular17).
