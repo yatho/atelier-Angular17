@@ -35,6 +35,7 @@
 <li>Lancer : <code>npm install</code></li>
 <li>Lancer : <code>npm start</code></li>
 </ol>
+<p>Bonne pratique : Faites des commits réguliers pour facilement revenir en arrière en cas de besoin</p>
 
 
       </google-codelab-step>
@@ -84,7 +85,7 @@ class YourComponent {
     
       <google-codelab-step label="Partie 1 : Input binding (TP)" duration="15">
         <ol type="1">
-<li>Supprimer le fichier <code>utility.ts</code> et utiliser des @Input()</li>
+<li>Supprimer le fichier <code>utility.ts</code> et utiliser des @Input() avec l&#39;option de routing <code>bindToComponentInputs</code></li>
 </ol>
 
 
@@ -155,38 +156,12 @@ export default [
   // ...
 ] as Route[];
 </code></pre>
-<h3 is-upgraded>Provide un service à un ensemble de sous routes</h3>
-<p>Dans la configuration des routes, on va pouvoir utiliser le mot clé <strong>providers: [...]</strong> afin de fournir un service pour plusieurs routes et sous composants :</p>
-<pre><code language="language-ts" class="language-ts">// Main application:
-export const ROUTES: Route[] = {
-  // Lazy-load the admin routes.
-  {path: &#39;admin&#39;, loadChildren: () =&gt; import(&#39;./admin/routes&#39;).then(mod =&gt; mod.ADMIN_ROUTES)},
-  // ... rest of the routes
-}
-
-// In admin/routes.ts:
-export const ADMIN_ROUTES: Route[] = [{
-  path: &#39;&#39;,
-  pathMatch: &#39;prefix&#39;,
-  providers: [
-    //ici le service d&#39;admin est chargé pour tous les enfants 
-    AdminService,
-    {provide: ADMIN_API_KEY, useValue: 12345},
-  ],
-  children: [
-    {path: &#39;users&#39;, component: AdminUsersCmp},
-    {path: &#39;teams&#39;, component: AdminTeamsCmp},
-  ],
-}];
-</code></pre>
 <h2 is-upgraded>Bootstrap avec un standalone component</h2>
 <p>Pour supprimer l&#39;ensemble des modules, il va falloir modifier le bootstraping de l&#39;application en modifiant la méthode du fichier <strong>main.js</strong>. Les services nécessaires à l&#39;ensemble de l&#39;application seront fournis dans ce fichier.</p>
 <pre><code language="language-ts" class="language-ts">bootstrapApplication(PhotoAppComponent, {
   providers: [
-    provideRouter([/* app routes */]),
-    importProvidersFrom(
-      LibraryModule.forRoot()
-    ),
+    provideRouter([/* app routes */], {/* options comme withComponentInputBinding() par exemple*/}),
+    provideHttpClient()
     // ...
   ]
 });
@@ -198,9 +173,10 @@ export const ADMIN_ROUTES: Route[] = [{
     
       <google-codelab-step label="Partie 2 : Standalone (TP)" duration="30">
         <ol type="1">
-<li>Migrez l&#39;application précédemment clonée vers le modèle full standalone (Plus aucun module).</li>
+<li>Migrez le composant <code>header</code> à la main.</li>
+<li>Utiliser la schematics <code>ng g @angular/core:standalone</code> pour migrer en automatique un maximum de choses.</li>
 <li>Réussite : Le comportement de l&#39;application est inchangé.</li>
-<li>Allez plus loin.</li>
+<li>Allez plus loin avec la suppression des modules de routing.</li>
 </ol>
 
 
@@ -359,9 +335,10 @@ export class UserControls {
     
       <google-codelab-step label="Partie 3 : Control flow (TP)" duration="20">
         <ol type="1">
-<li>Migrez l&#39;application précédemment clonée vers le modèle full control-flow.</li>
+<li>Migrez le composant <code>recipe</code> vers le modèle full control-flow.</li>
+<li>Supprimer le type <code>$any</code> et voir que maintenant le typage fonctionne !</li>
+<li>Utiliser la schematics <code>ng g @angular/core:control-flow</code> pour migrer en automatique un maximum de choses.</li>
 <li>Réussite : Le comportement de l&#39;application est inchangé.</li>
-<li>Allez plus loin.</li>
 </ol>
 
 
@@ -446,7 +423,9 @@ test(formGroup.count) =&gt; error
       <google-codelab-step label="Partie 4 : Formulaire typé (TP)" duration="30">
         <ol type="1">
 <li>Migrer le formulaire pour un formulaire typé</li>
+<li>Simplifier le HTML si c&#39;est possible (en autre pour les FormArrays)</li>
 </ol>
+<p>Note : Il existe du code en haut du composant fournit afin de gagner du temps.</p>
 
 
       </google-codelab-step>

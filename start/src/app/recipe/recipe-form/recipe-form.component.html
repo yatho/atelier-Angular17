@@ -1,9 +1,8 @@
 <form [formGroup]="formGroup">
-    @if (!!formGroup.get('id')?.value) {
-      <h1>Editer</h1>
-    } @else {
+      <h1 *ngIf="!!formGroup.get('id')?.value; else createTpl">Editer</h1>
+    <ng-template #createTpl>
       <h1>Créer</h1>
-    }
+    </ng-template>
     <mat-stepper orientation="vertical">
       <mat-step>
         <ng-template matStepLabel>Metadata de la recette</ng-template>
@@ -16,9 +15,7 @@
             <mat-form-field>
               <mat-label>Type</mat-label>
               <mat-select formControlName="type">
-                @for (type of recipeTypes; track type) {
-                  <mat-option [value]="type">{{type}}</mat-option>
-                }
+                <mat-option *ngFor="let type of recipeTypes" [value]="type">{{type}}</mat-option>
               </mat-select>
             </mat-form-field>
             <section class="actions">
@@ -41,8 +38,8 @@
                 </tr>
               </thead>
               <tbody>
-                @for (ingredient of ingredientsForm.controls; track ingredient; let i = $index) {
                   <tr
+                    *ngFor="let ingredient of ingredientsForm.controls; let i = index"
                     [formGroupName]="i">
                     <td>
                       <mat-form-field>
@@ -59,10 +56,9 @@
                     <td><mat-form-field>
                       <mat-label>Unité de mesure</mat-label>
                       <mat-select formControlName="unit">
-                        @for (unit of unitOfMeasure; track unit) {
                           <mat-option
+                          *ngFor="let unit of unitOfMeasure"
                           [value]="unit">{{unit}}</mat-option>
-                        }
                       </mat-select>
                     </mat-form-field>
                   </td>
@@ -72,7 +68,6 @@
                     </button>
                   </td>
                 </tr>
-              }
             </tbody>
           </table>
         </section>
@@ -95,8 +90,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (instruction of instructionsForm.controls; track instruction; let i = $index) {
-                <tr>
+                <tr *ngFor="let instruction of instructionsForm.controls; let i = index">
                   <td>
                     <mat-form-field>
                       <mat-label>Instruction</mat-label>
@@ -108,7 +102,6 @@
                     fontIcon="clear"></mat-icon></button>
                   </td>
                 </tr>
-              }
             </tbody>
           </table>
         </section>

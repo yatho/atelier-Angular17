@@ -18,6 +18,8 @@ Cet atelier permet de monter en compétence sur les dernières versions d'Angula
 3. Lancer : ```npm install```
 4. Lancer : ```npm start```
 
+Bonne pratique : Faites des commits réguliers pour facilement revenir en arrière en cas de besoin
+
 ## Partie 1 : Input binding (Théorie)
 
 ### Required
@@ -76,7 +78,7 @@ class YourComponent {
 ## Partie 1 : Input binding (TP)
 Duration: 0:15:00
 
-1. Supprimer le fichier `utility.ts` et utiliser des @Input()
+1. Supprimer le fichier `utility.ts` et utiliser des @Input() avec l'option de routing `bindToComponentInputs`
 
 ## Partie 2 : Standalone (Théorie)
 
@@ -166,34 +168,6 @@ export default [
 ] as Route[];
 ```
 
-#### Provide un service à un ensemble de sous routes
-
-Dans la configuration des routes, on va pouvoir utiliser le mot clé **providers: [...]** afin de fournir un service pour plusieurs routes et sous composants :
-
-```ts
-// Main application:
-export const ROUTES: Route[] = {
-  // Lazy-load the admin routes.
-  {path: 'admin', loadChildren: () => import('./admin/routes').then(mod => mod.ADMIN_ROUTES)},
-  // ... rest of the routes
-}
-
-// In admin/routes.ts:
-export const ADMIN_ROUTES: Route[] = [{
-  path: '',
-  pathMatch: 'prefix',
-  providers: [
-    //ici le service d'admin est chargé pour tous les enfants 
-    AdminService,
-    {provide: ADMIN_API_KEY, useValue: 12345},
-  ],
-  children: [
-    {path: 'users', component: AdminUsersCmp},
-    {path: 'teams', component: AdminTeamsCmp},
-  ],
-}];
-```
-
 ### Bootstrap avec un standalone component
 
 Pour supprimer l'ensemble des modules, il va falloir modifier le bootstraping de l'application en modifiant la méthode du fichier **main.js**. 
@@ -202,10 +176,8 @@ Les services nécessaires à l'ensemble de l'application seront fournis dans ce 
 ```ts
 bootstrapApplication(PhotoAppComponent, {
   providers: [
-    provideRouter([/* app routes */]),
-    importProvidersFrom(
-      LibraryModule.forRoot()
-    ),
+    provideRouter([/* app routes */], {/* options comme withComponentInputBinding() par exemple*/}),
+    provideHttpClient()
     // ...
   ]
 });
@@ -216,9 +188,10 @@ Par exemple, ```provideRouter``` remplacera la configuration ```RouterModule.for
 ## Partie 2 : Standalone (TP)
 Duration: 0:30:00
 
-1. Migrez l'application précédemment clonée vers le modèle full standalone (Plus aucun module).
-2. Réussite : Le comportement de l'application est inchangé.
-3. Allez plus loin.
+1. Migrez le composant `header` à la main.
+2. Utiliser la schematics `ng g @angular/core:standalone` pour migrer en automatique un maximum de choses.
+3. Réussite : Le comportement de l'application est inchangé.
+4. Allez plus loin avec la suppression des modules de routing.
 
 ## Partie 3 : Control flow (Théorie)
 
@@ -406,9 +379,10 @@ devient :
 ## Partie 3 : Control flow (TP)
 Duration: 0:20:00
 
-1. Migrez l'application précédemment clonée vers le modèle full control-flow.
-2. Réussite : Le comportement de l'application est inchangé.
-3. Allez plus loin.
+1. Migrez le composant `recipe` vers le modèle full control-flow.
+2. Supprimer le type `$any` et voir que maintenant le typage fonctionne !
+3. Utiliser la schematics `ng g @angular/core:control-flow` pour migrer en automatique un maximum de choses.
+4. Réussite : Le comportement de l'application est inchangé.
 
 ## Partie 4 : Formulaire typé (Théorie)
 
@@ -533,8 +507,12 @@ Types of property 'count' are incompatible.
 Duration: 0:30:00
 
 1. Migrer le formulaire pour un formulaire typé
+2. Simplifier le HTML si c'est possible (en autre pour les FormArrays)
+
+Note : Il existe du code en haut du composant fournit afin de gagner du temps.
 
 ## Partie 5 : Signals (Théorie)
+
 ### Introduction
 
 **Signal** est une nouveauté Angular 16. Cela correspond à un observable qui va informer les consommateurs qui l'écoute lorsqu'il change de valeur. Il peut contenir n'importe quelle valeur. Un **signal** peut être **writable** ou **read-only**.
