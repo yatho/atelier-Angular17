@@ -1,5 +1,4 @@
 tasks:
-    - init: |
-          cd start && npm install
-    - command: |
-          npm start
+    - before: cd start
+    - init: npm install
+    - command: npm start
