@@ -598,7 +598,7 @@ Attention, cette méthode peut engendrer des erreurs comme celle-ci : **Expressi
 ## Partie 5 : Signals (TP)
 Duration: 0:20:00
 
-1. Simplifier l'écriture du service `shopping.service.ts` et de tout les composants associés en utilisant les signals.`
+1. Simplifier l'écriture du service `shopping.service.ts` et de tout les composants associés en utilisant les signals.
 
 ## Partie 6 : Balise image (Théorie)
 
