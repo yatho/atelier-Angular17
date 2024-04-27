@@ -539,17 +539,6 @@ Ou par la méthode **update** qui permet de mettre à jour la valeur en fonction
 count.update(value => value + 1);
 ```
 
-Lorsqu'on utilise un **signal** contenant un objet. Il est possible de modifier l'objet sans le remplacer via la méthode **mutate** :
-
-```ts
-const todos = signal([{title: 'Learn signals', done: false}]);
-
-todos.mutate(value => {
-  // Change the first TODO in the array to 'done: true' without replacing it.
-  value[0].done = true;
-});
-```
-
 Note : un **signal read-only** à uniquement le type **Signal<T>**
 
 ### Computed signals

@@ -446,14 +446,6 @@ console.log(&#39;The count is: &#39; + count());
 <pre><code language="language-ts" class="language-ts">// Increment the count by 1.
 count.update(value =&gt; value + 1);
 </code></pre>
-<p>Lorsqu&#39;on utilise un <strong>signal</strong> contenant un objet. Il est possible de modifier l&#39;objet sans le remplacer via la méthode <strong>mutate</strong> :</p>
-<pre><code language="language-ts" class="language-ts">const todos = signal([{title: &#39;Learn signals&#39;, done: false}]);
-
-todos.mutate(value =&gt; {
-  // Change the first TODO in the array to &#39;done: true&#39; without replacing it.
-  value[0].done = true;
-});
-</code></pre>
 <p>Note : un <strong>signal read-only</strong> à uniquement le type <strong>Signal</strong></p>
 <h2 is-upgraded>Computed signals</h2>
 <p>On s&#39;abonne aux modifications d&#39;un <strong>WritableSignal</strong> via la méthode <strong>computed</strong> :</p>
@@ -488,7 +480,7 @@ const conditionalCount = computed(() =&gt; {
     
       <google-codelab-step label="Partie 5 : Signals (TP)" duration="20">
         <ol type="1">
-<li>Simplifier l&#39;écriture du service <code>shopping.service.ts</code> et de tout les composants associés en utilisant les signals.`</li>
+<li>Simplifier l&#39;écriture du service <code>shopping.service.ts</code> et de tout les composants associés en utilisant les signals.</li>
 </ol>
 
 
