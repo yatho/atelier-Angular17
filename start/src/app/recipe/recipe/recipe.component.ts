@@ -4,9 +4,10 @@ import { ShoppingService } from '../services/shopping.service';
 import { getFromResolvers } from '../../utility';
 
 @Component({
-  selector: 'app-recipe',
-  templateUrl: './recipe.component.html',
-  styleUrl: './recipe.component.css'
+    selector: 'app-recipe',
+    templateUrl: './recipe.component.html',
+    styleUrl: './recipe.component.css',
+    standalone: false
 })
 export class RecipeComponent {
   recipe?: Recipe = getFromResolvers<Recipe>('recipe');

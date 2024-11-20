@@ -3,9 +3,10 @@ import { Recipe } from '../models/recipe';
 import { ShoppingService } from '../services/shopping.service';
 
 @Component({
-  selector: 'app-shopping-list',
-  templateUrl: './shopping-list.component.html',
-  styleUrl: './shopping-list.component.css'
+    selector: 'app-shopping-list',
+    templateUrl: './shopping-list.component.html',
+    styleUrl: './shopping-list.component.css',
+    standalone: false
 })
 export class ShoppingListComponent {
   private shoppingService = inject(ShoppingService);

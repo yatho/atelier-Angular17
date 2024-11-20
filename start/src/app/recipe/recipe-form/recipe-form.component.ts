@@ -25,7 +25,8 @@ export function enumValidator(enumType: any): ValidatorFn {
 @Component({
     selector: 'app-recipe-form',
     templateUrl: './recipe-form.component.html',
-    styleUrl: './recipe-form.component.css'
+    styleUrl: './recipe-form.component.css',
+    standalone: false
 })
 export class RecipeFormComponent implements OnInit {
   recipe?: Recipe = getFromResolvers<Recipe>('recipe');
